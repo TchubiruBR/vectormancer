@@ -5,6 +5,7 @@ setup.py
 tests/test_smoke.py
 vectormancer/__init__.py
 vectormancer/core.py
+vectormancer/test.py
 vectormancer.egg-info/PKG-INFO
 vectormancer.egg-info/SOURCES.txt
 vectormancer.egg-info/dependency_links.txt
