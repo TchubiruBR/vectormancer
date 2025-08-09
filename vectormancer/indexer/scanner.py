@@ -3,7 +3,7 @@ from typing import Iterable, List
 import os
 
 DEFAULT_EXCLUDE = {".git", "__pycache__", "node_modules"}
-INCLUDE_EXT = {".md", ".txt", ".pdf", ".py", ".json", ".js", ".ts"}
+INCLUDE_EXT = {".md", ".txt", ".pdf", ".py", ".json", ".js", ".ts", ".html", ".htm"}  # <- added .html/.htm
 
 def scan_paths(paths: Iterable[Path]) -> List[Path]:
     out = []

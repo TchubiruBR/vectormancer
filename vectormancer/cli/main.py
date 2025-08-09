@@ -40,3 +40,27 @@ def query(question, top_k, window, show_sources, config, persist_dir, verbose):
         click.echo(f"[{i}] ({score:.3f}) {path}  "
                    f"[citation offset={cit.get('offset','?')} len={cit.get('length','?')}]")
         click.echo(context + "\n")
+
+
+@main.command()
+@click.argument("url", type=str)
+@click.option("--dest", type=str, default="./examples", help="Directory to save the downloaded file")
+@click.option("--persist-dir", type=str, default=None, help="Directory to store/load the index")
+@click.option("--rebuild", is_flag=True, help="Rebuild index before reindexing")
+def fetch(url, dest, persist_dir, rebuild):
+    """Download a PDF/HTML/TXT from URL, save into corpus, and re-index."""
+    from vectormancer.indexer.fetcher import fetch_url
+    import os, shutil
+
+    vm = Vectormancer(persist_dir=persist_dir)
+
+    if rebuild:
+        p = os.path.expanduser(vm.store.persist_dir)
+        shutil.rmtree(p, ignore_errors=True)
+
+    saved_path = fetch_url(url, dest)
+    click.echo(f"Downloaded to: {saved_path}")
+
+    vm.index(dest)
+    click.echo(f"Indexed: {dest}")
+    
