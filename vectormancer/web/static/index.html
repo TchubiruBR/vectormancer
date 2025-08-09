@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Vectormancer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>body{font:14px/1.5 system-ui,sans-serif;margin:2rem}input,button{font:inherit;padding:.5rem}pre{background:#f6f6f6;padding:1rem;border-radius:8px;overflow:auto}</style>
+</head>
+<body>
+  <h1>🔎 Vectormancer</h1>
+
+  <h3>Index</h3>
+  <input id="idxPath" value="../examples" size="50" />
+  <label><input id="idxRebuild" type="checkbox" /> rebuild</label>
+  <button onclick="doIndex()">Index</button>
+
+  <h3>Fetch (PDF/HTML/TXT)</h3>
+  <input id="url" placeholder="https://example.com/doc.pdf" size="50" />
+  <input id="dest" value="../examples" size="30" />
+  <label><input id="fetchRebuild" type="checkbox" /> rebuild</label>
+  <button onclick="doFetch()">Fetch + Index</button>
+
+  <h3>Query</h3>
+  <input id="q" placeholder="Ask something…" size="60" />
+  <input id="k" type="number" value="5" style="width:60px" />
+  <input id="w" type="number" value="1200" style="width:80px" />
+  <button onclick="doQuery()">Search</button>
+
+  <div id="out"></div>
+
+<script>
+async function doIndex(){
+  const path = document.getElementById('idxPath').value;
+  const rebuild = document.getElementById('idxRebuild').checked;
+  const r = await fetch('/index', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({path, rebuild})});
+  document.getElementById('out').innerHTML = '<pre>' + await r.text() + '</pre>';
+}
+
+async function doFetch(){
+  const url = document.getElementById('url').value;
+  const dest = document.getElementById('dest').value;
+  const rebuild = document.getElementById('fetchRebuild').checked;
+  const r = await fetch('/fetch', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({url, dest, rebuild})});
+  document.getElementById('out').innerHTML = '<pre>' + await r.text() + '</pre>';
+}
+
+async function doQuery(){
+  const question = document.getElementById('q').value;
+  const top_k = parseInt(document.getElementById('k').value, 10);
+  const windowSz = parseInt(document.getElementById('w').value, 10);
+  const r = await fetch('/query', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({question, top_k, window: windowSz})});
+  const data = await r.json();
+  const html = (data.hits||[]).map((h,i)=>`
+    <div>
+      <h3>[${i+1}] (${(h.score||0).toFixed(3)}) ${h.path}</h3>
+      <small>citation: offset=${h.citation?.offset ?? "?"}, len=${h.citation?.length ?? "?"}</small>
+      <pre>${(h.context || h.text || '').slice(0,1200)}</pre>
+    </div>`).join('');
+  document.getElementById('out').innerHTML = html || '<p>No results.</p>';
+}
+</script>
+</body>
+</html>

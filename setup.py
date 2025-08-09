@@ -25,6 +25,10 @@ setup(
         "sentence-transformers>=3.0.0",
         "rich>=13.7.0",
     ],
+    extras_require={
+        "web": ["fastapi", "uvicorn", "python-multipart"],
+        "ocr": ["pdf2image","pytesseract"],
+    }
     entry_points={
         "console_scripts": [
             "vectormancer=vectormancer.cli:main",
