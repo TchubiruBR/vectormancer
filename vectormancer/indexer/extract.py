@@ -53,3 +53,44 @@ def extract_text(path: Path, enable_ocr: bool = True) -> str:
         return ""
     return ""
 
+
+#### test ####
+from pathlib import Path
+
+def _extract_pdf_text_pdfplumber(pdf_path: Path) -> str:
+    try:
+        import pdfplumber
+        text = []
+        with pdfplumber.open(str(pdf_path)) as pdf:
+            for p in pdf.pages:
+                text.append(p.extract_text() or "")
+        return "\n".join(text).strip()
+    except Exception:
+        return ""
+
+def _extract_pdf_text_ocr(pdf_path: Path) -> str:
+    # OCR fallback for scanned PDFs
+    try:
+        from pdf2image import convert_from_path
+        import pytesseract
+        pages = convert_from_path(str(pdf_path), dpi=300)
+        out = []
+        for img in pages:
+            out.append(pytesseract.image_to_string(img))
+        return "\n".join(out).strip()
+    except Exception:
+        return ""
+
+def extract_text(path: Path, enable_ocr: bool = True) -> str:
+    suffix = path.suffix.lower()
+    try:
+        if suffix in {".md", ".txt", ".py", ".json", ".js", ".ts"}:
+            return path.read_text(encoding="utf-8", errors="ignore")
+        if suffix == ".pdf":
+            txt = _extract_pdf_text_pdfplumber(path)
+            if not txt and enable_ocr:
+                txt = _extract_pdf_text_ocr(path)
+            return txt
+    except Exception:
+        return ""
+    return ""
