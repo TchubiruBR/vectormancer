@@ -1,0 +1,15 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+tests/test_smoke.py
+vectormancer/__init__.py
+vectormancer/core.py
+vectormancer.egg-info/PKG-INFO
+vectormancer.egg-info/SOURCES.txt
+vectormancer.egg-info/dependency_links.txt
+vectormancer.egg-info/entry_points.txt
+vectormancer.egg-info/requires.txt
+vectormancer.egg-info/top_level.txt
+vectormancer/cli/__init__.py
+vectormancer/cli/main.py
