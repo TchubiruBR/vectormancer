@@ -72,3 +72,37 @@ def stats(persist_dir):
     s = vm.store.stats()
     import json
     click.echo(json.dumps(s, indent=2))
+
+@main.command()
+@click.argument("topic", type=str)
+@click.option("--num", type=int, default=5, help="Number of questions")
+@click.option("--window", type=int, default=800, help="Context window size")
+@click.option("--persist-dir", type=str, default=None, help="Index location")
+@click.option("--interactive", is_flag=True, help="Run as an interactive quiz")
+def quiz(topic, num, window, persist_dir, interactive):
+    """Generate quick cloze questions from your corpus for studying."""
+    from vectormancer.quiz import generate_quiz
+    vm = Vectormancer(persist_dir=persist_dir)
+    qs = generate_quiz(vm, topic=topic, num=num, window=window)
+
+    if not qs:
+        click.echo("No material found for that topic. Try indexing more content.")
+        return
+
+    if not interactive:
+        for i, qa in enumerate(qs, 1):
+            click.echo(f"\nQ{i}: {qa['question']}\n— Source: {qa['path']}")
+            click.echo(f"A{i}: {qa['answer']}")
+        return
+
+    # interactive session
+    score = 0
+    for i, qa in enumerate(qs, 1):
+        click.echo(f"\nQ{i}: {qa['question']}\n— Source: {qa['path']}")
+        ans = click.prompt("Your answer")
+        if ans.strip().lower() == qa["answer"].lower():
+            click.echo("✅ Correct!")
+            score += 1
+        else:
+            click.echo(f"❌ Correct answer: {qa['answer']}")
+    click.echo(f"\nScore: {score}/{len(qs)}")
