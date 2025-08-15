@@ -63,4 +63,12 @@ def fetch(url, dest, persist_dir, rebuild):
 
     vm.index(dest)
     click.echo(f"Indexed: {dest}")
-    
+
+@main.command()
+@click.option("--persist-dir", type=str, default=None, help="Directory where index is stored")
+def stats(persist_dir):
+    """Show index statistics and disk usage."""
+    vm = Vectormancer(persist_dir=persist_dir)
+    s = vm.store.stats()
+    import json
+    click.echo(json.dumps(s, indent=2))

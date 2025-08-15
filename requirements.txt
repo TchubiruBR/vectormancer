@@ -1,0 +1,30 @@
+# ---- Core ----
+numpy<2
+click>=8.1.7
+pydantic>=2.6.0
+PyYAML>=6.0.0
+watchdog>=4.0.0
+rich>=13.7.0
+requests>=2.31.0
+
+# ---- Vector / NLP ----
+faiss-cpu>=1.7.4; platform_system != "Windows"
+sentence-transformers>=3.0.0
+
+# ---- Parsing ----
+pdfplumber>=0.11.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# ---- Optional (uncomment if using!) ----
+# FastAPI web API
+# fastapi>=0.110.0
+# uvicorn>=0.27.0
+# python-multipart>=0.0.9
+
+# OCR for scanned PDFs (needs system pkgs too: tesseract-ocr, poppler-utils)
+# pdf2image>=1.17.0
+# pytesseract>=0.3.10
+
+# Testing
+# pytest>=7.4.0
