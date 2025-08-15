@@ -72,7 +72,7 @@ def stats(persist_dir):
     s = vm.store.stats()
     import json
     click.echo(json.dumps(s, indent=2))
-
+    
 @main.command()
 @click.argument("topic", type=str)
 @click.option("--num", type=int, default=5, help="Number of questions")

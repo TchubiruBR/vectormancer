@@ -129,3 +129,25 @@ class VectorStore:
             return True
         except Exception:
             return False
+
+
+    def stats(self) -> dict:
+        meta, vecs, faiss_idx, docs = self._paths()
+        size_bytes = 0
+        for p in (meta, vecs, faiss_idx, docs):
+            if os.path.exists(p):
+                size_bytes += os.path.getsize(p)
+        return {
+            "persist_dir": self.persist_dir,
+            "num_chunks": len(self.texts),
+            "num_docs": len(set(self.ids)),
+            "dim": self.dim,
+            "faiss_enabled": bool(self.index is not None),
+            "files_on_disk": {
+                "meta": os.path.exists(meta),
+                "vectors": os.path.exists(vecs),
+                "faiss": os.path.exists(faiss_idx),
+                "docs": os.path.exists(docs),
+            },
+            "disk_usage_bytes": size_bytes,
+        }
